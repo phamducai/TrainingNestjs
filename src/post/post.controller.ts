@@ -43,8 +43,9 @@ export class PostController {
     await this.postService.deletePost(id);
     return true;
   }
-  @Get('get/categories')
+  @Get('categories')
   async getByCategories(@Query('category_ids') category_ids) {
+    console.log(category_ids);
     return await this.postService.getByCategories(category_ids);
   }
 }

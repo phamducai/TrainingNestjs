@@ -16,6 +16,8 @@ export class UserService {
     if (userInDb) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
+
+    userDto.refreshToken = null;
     return await this.userRepository.create(userDto);
   }
   async findByLogin({ email, password }: LoginUserDto): Promise<any> {
@@ -35,5 +37,39 @@ export class UserService {
     return await this.userRepository.findByCondition({
       email: email,
     });
+  }
+
+  async update(filter, update) {
+    const salt = bcrypt.genSaltSync(10);
+    if (update.refreshToken) {
+      update.refreshToken = await bcrypt.hash(
+        this.reverse(update.refreshToken),
+        salt,
+      );
+    }
+    return await this.userRepository.findByConditionAndUpdate(filter, update);
+  }
+
+  async getUserByRefresh(refresh_token, email) {
+    // console.log(refresh_token, email);
+    const user = await this.findByEmail(email);
+    console.log(user);
+    if (!user) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+    const is_equal = await bcrypt.compare(
+      this.reverse(refresh_token),
+      user.refreshToken,
+    );
+
+    if (!is_equal) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    return user;
+  }
+
+  private reverse(s) {
+    return s.split('').reverse().join('');
   }
 }
