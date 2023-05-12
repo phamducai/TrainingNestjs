@@ -1,4 +1,5 @@
 export class CreatePostDto {
+  id?: number;
   content: string;
   title: string;
   user: string;

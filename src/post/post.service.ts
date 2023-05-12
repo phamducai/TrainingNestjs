@@ -20,6 +20,8 @@ export class PostService {
   async getPostById(post_id: string) {
     const post = await this.postRepository.findById(post_id);
     if (post) {
+      await post.populate({ path: 'user', select: 'name email' });
+
       return post;
     }
     throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
@@ -69,13 +71,13 @@ export class PostService {
     return await this.postRepository.getByCondition({
       // 'numbers.0': { $eq: 10 },
       // numbers: { $elemMatch: { $gt: 13, $lt: 20 } },
-      // numbers: { $gt: 13, $lt: 20 },
+      numbers: { $gt: 13, $lt: 20 },
       // $and: [{ numbers: { $gt: 13 } }, { numbers: { $lt: 20 } }],
       // tags: 'black',
       // tags: { $all: ['black', 'blank'] },
       // tags: ['red', 'blank'],
       // tags: { $size: 3 },
-      tags: { $exists: false },
+      // tags: { $exists: false },
     });
   }
 }

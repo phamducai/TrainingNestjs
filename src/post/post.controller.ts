@@ -19,6 +19,7 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   getAllPost() {
     return this.postService.getAllPosts();
   }
@@ -47,5 +48,16 @@ export class PostController {
   async getByCategories(@Query('category_ids') category_ids) {
     console.log(category_ids);
     return await this.postService.getByCategories(category_ids);
+  }
+
+  @Get('get/array')
+  async getByArray() {
+    return this.postService.getByArray();
+  }
+  @Get('user/all')
+  async getPostUser(@Req() req: any) {
+    console.log(req.user);
+    await req.user.populate('posts').execPopulate();
+    return req.user.posts;
   }
 }

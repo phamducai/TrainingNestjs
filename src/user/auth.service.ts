@@ -18,7 +18,10 @@ export class AuthService {
 
       return user;
     } catch (error) {
-      console.log(error);
+      const { status } = error;
+      if (status === 400) {
+        throw new HttpException('Email exsist', HttpStatus.BAD_REQUEST);
+      }
     }
   }
 
@@ -44,7 +47,7 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync(
       { email },
       {
-        expiresIn: 3600,
+        expiresIn: this.configService.get('EXPIRESIN'),
         secret: this.configService.get('SECRET_KEY'),
       },
     );

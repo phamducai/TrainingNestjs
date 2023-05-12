@@ -1,3 +1,4 @@
+import { SubscriberModule } from './post/subscriber.module';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     UserModule,
     PostModule,
+    SubscriberModule,
   ],
 })
 export class AppModule {}
